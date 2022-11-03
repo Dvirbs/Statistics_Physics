@@ -58,6 +58,7 @@ def energy_steps_graph(q1, q2, steps):
     plt.show()
 
 
+# Part 2
 def bath_and_solid(steps, g):
     """
 
@@ -78,7 +79,14 @@ def bath_and_solid(steps, g):
         tot_energy = sum(g)
         energy_g.append(tot_energy)
         energy_q23.append(g[23])
-        
+    return g, energy_g, energy_q23
+
+def count_elements(seq) -> dict:
+    """Tally elements from `seq`."""
+    hist = {}
+    for i in seq:
+        hist[i] = hist.get(i, 0) + 1
+     return hist
 
 
 if __name__ == '__main__':
@@ -98,4 +106,7 @@ if __name__ == '__main__':
     N_C = 100
     C = [0] * N_C
     theta = 2.5
-    steps = 10 ** 7
+    STEPS = 10 ** 7
+    C, energy_C, energy_C23 = bath_and_solid(STEPS, C)
+
+
