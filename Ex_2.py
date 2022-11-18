@@ -50,8 +50,8 @@ def two_solids(steps, n, g):
 def energy_steps_graph(q1, q2, steps):
     plt.plot([i for i in range(1, steps + 1)], q1)
     plt.plot([i for i in range(1, steps + 1)], q2)
-    plt.xscale('log')
-    plt.xlabel('Log Step(time)')
+    # plt.xscale('log')
+    plt.xlabel('Step(time)')
     plt.ylabel('Energy_Level')
     plt.title("Linear graph")
     plt.show()
@@ -65,13 +65,19 @@ def hist(g, step, bins):
 
 
 def plot_hist(h):
-    plt.plot(numpy.arange(20), numpy.array(h[0])/100)
-    plt.plot(numpy.arange(20), numpy.array(h[1])/100)
-    plt.plot(numpy.arange(20), numpy.array(h[2])/100)
-    plt.plot(numpy.arange(20), numpy.array(h[3])/100)
-    plt.plot(numpy.arange(20), numpy.array(h[4])/100)
-    plt.legend(['2*10^6', '4*10^6', '6*10^6', '8*10^6','10^7'])
+    #plt.plot(numpy.arange(20), numpy.array(h[0]) / 100)
+    plt.plot(numpy.arange(20), numpy.array(h[0]))
+    #plt.plot(numpy.arange(20), numpy.array(h[1]) / 100)
+    plt.plot(numpy.arange(20), numpy.array(h[1]))
+    # plt.plot(numpy.arange(20), numpy.array(h[2]) / 100)
+    plt.plot(numpy.arange(20), numpy.array(h[2]))
+    # plt.plot(numpy.arange(20), numpy.array(h[3]) / 100)
+    plt.plot(numpy.arange(20), numpy.array(h[3]))
+    # plt.plot(numpy.arange(20), numpy.array(h[4]) / 100)
+    plt.plot(numpy.arange(20), numpy.array(h[4]))
+    plt.legend(['2*10^6', '4*10^6', '6*10^6', '8*10^6', '10^7'])
     plt.title("Numbers of Particles Each Energy histogram")
+    plt.yscale('log')
     plt.xlabel('Energy Levels')
     plt.ylabel('Numbers of Particles[Norm]')
     plt.show()
@@ -84,7 +90,7 @@ def bath_and_solid(steps, g, n_g):
     energy_g = list()
     energy_q23 = list()
     hist_different_steps = list()
-    for step in range(steps+1):
+    for step in range(steps):
         i = random.randint(1, 100)
         delta = random.randrange(-1, 2, 2)
         if delta == -1:
@@ -97,19 +103,40 @@ def bath_and_solid(steps, g, n_g):
         tot_energy = sum(g)
         energy_g.append(tot_energy)
         energy_q23.append(g[23])
-        if step == 2 * 10 ** 6 or step == 4 * 10 ** 6 or step == 6 * 10 ** 6 or step == 8 * 10 ** 6 or step == 10 ** 7:
+        if step == 2 * 10 ** 6 or step == 4 * 10 ** 6 or step == 6 * 10 ** 6 or step == 8 * 10 ** 6 or step == 10 ** 7 - 1:
             h = hist(g, step, 21)
             hist_different_steps.append(h[0])
     plot_hist(hist_different_steps)
     return g, energy_g, energy_q23
 
 
-def energy_steps_graph_2(q, steps):
-    plt.plot([i for i in range(1, steps + 1)], q)
+def energy_steps_graph_Q_tot(q, steps):
+    step_axis = numpy.array([i for i in range(1, steps + 1)])
+    plt.plot(step_axis, q)
     plt.xscale('log')
-    plt.xlabel('Log Step(time)')
+    plt.xlabel('Step(Time)')
     plt.ylabel('Energy_Level')
-    plt.title("Change of Energy Level Solid")
+    plt.title("Change of Energy Level Solid Per Step")
+    plt.show()
+
+
+def energy_steps_graph_Q23(q, steps):
+    h = plt.hist(q, bins=20)
+    plt.clf()
+    plt.plot(numpy.arange(20), numpy.array(h[0]/10**7))
+    plt.xlabel('Energy_Level')
+    plt.ylabel('step - norm')
+    plt.title("energy histogram for particle num 23")
+    plt.show()
+
+
+def energy_steps_graph_Q23_log(q, steps):
+    step_axis = numpy.array([i for i in range(1, steps + 1)]) / (10 ** 7)
+    plt.plot(step_axis, q)
+    plt.xscale('log')
+    plt.xlabel('Step(Time-log)')
+    plt.ylabel('Energy_Level')
+    plt.title("Change of Energy Level Of Particle  Per Step")
     plt.show()
 
 
@@ -130,8 +157,9 @@ if __name__ == '__main__':
     N_C = 100
     C = [0] * N_C
     theta = 2.5
-    steps = 10 ** 7
     STEPS = 10 ** 7
     C, energy_C, energy_C23 = bath_and_solid(STEPS, C, N_C)
-    energy_steps_graph_2(energy_C, STEPS)
-    hist(energy_C23, STEPS, 25)
+    energy_steps_graph_Q_tot(energy_C, STEPS)
+    energy_steps_graph_Q23(energy_C23, STEPS)
+    energy_steps_graph_Q23_log(energy_C23, STEPS)
+    # hist(energy_C23, STEPS, 25)
