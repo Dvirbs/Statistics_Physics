@@ -186,8 +186,12 @@ if __name__ == '__main__':
         box.update_dt_wall_all()
         dt_coll_min, firsts_p_ij_col, arg_list = coll_time(box.particles)   # firsts_p_ij_col is indexes i and j
         dt_wall_min, first_p, axis = first_particle_and_min_time(p1, p2, p3, p4)
-        wall_or_coll = np.argmin(np.array(dt_wall_min, dt_coll_min))
-        dt = np.array(dt_wall_min, dt_coll_min)[wall_or_coll]
+        # print(dt_wall_min, dt_coll_min)
+        # wall_or_coll = np.argmin(np.array([dt_wall_min, dt_coll_min]))
+        # print(wall_or_coll)
+        #         dt = np.array(dt_wall_min, dt_coll_min)[wall_or_coll]
+        wall_or_coll = 0 if dt_wall_min < dt_coll_min else 1
+        dt           = min(dt_wall_min, dt_coll_min)
         for p in box.particles:
             p.location[0], p.location[1] = p.location[0] + dt * p.velocity[0], p.location[1] + dt * p.velocity[1]
         box.update_positions()
@@ -196,9 +200,10 @@ if __name__ == '__main__':
         else:
             box.update_velocity_both(arg_list, firsts_p_ij_col)
         counter += 1
+        print(firsts_p_ij_col[0])
         particle_wall_counters[first_p] += 1
-        particle_coll_counters[firsts_p_ij_col[0]] += 1
-        particle_coll_counters[firsts_p_ij_col[1]] += 1
+        # particle_coll_counters[firsts_p_ij_col[0]] += 1
+        # particle_coll_counters[firsts_p_ij_col[1]] += 1
         t += dt
         print("************************************")
         print(box)
