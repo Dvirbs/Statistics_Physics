@@ -149,11 +149,26 @@ def coll_time(p_list: [Particle]):
             if j <= i:
                 continue
             d_x, d_y = p_j.location[0] - p_i.location[0], p_j.location[1] - p_i.location[1]
+            print(f'p_j.name {p_j.name}')
+            print(f'p_i.name {p_i.name}')
+            print(f'p_j.location[0] {p_j.location[0]}')
+            print(f'pp_j.location[1] {p_j.location[1]}')
+            print(f'p_i.location[0] {p_i.location[0]}')
+            print(f'p_i.location[1] {p_i.location[1]}')
+            print(f'd_x {d_x}')
+            print(f'd_y {d_y}')
             d_l_2 = d_x ** 2 + d_y**2
+            d_l = d_l_2 ** 0.5
             d_vx, d_vy = p_j.velocity[0] - p_i.velocity[0], p_j.velocity[1] - p_i.velocity[1]
             d_v_2 = d_vx ** 2 + d_vy ** 2
+            print(f'd_vx {d_vx}')
+            print(f'd_vy {d_vy}')
+            print(f'd_v_2 {d_v_2}')
             s = d_vx * d_x + d_vy * d_y
+            print(f's {s}')
             gamma = s**2 - d_v_2 * (d_l_2-4*p_i.radius**2)
+            print('gamma', gamma)
+
             if gamma > 0 and s < 0:
                 coll_t_ij = (s+gamma**0.5)/d_v_2
                 collisions_particles = [i, j]
@@ -192,6 +207,9 @@ if __name__ == '__main__':
         #         dt = np.array(dt_wall_min, dt_coll_min)[wall_or_coll]
         wall_or_coll = 0 if dt_wall_min < dt_coll_min else 1
         dt           = min(dt_wall_min, dt_coll_min)
+        print(f'dt {dt}')
+        print(f'dt_wall_min {dt_wall_min}')
+        print(f'dt_coll_min {dt_coll_min}')
         for p in box.particles:
             p.location[0], p.location[1] = p.location[0] + dt * p.velocity[0], p.location[1] + dt * p.velocity[1]
         box.update_positions()
