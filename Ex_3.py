@@ -276,6 +276,7 @@ if __name__ == '__main__':
     plt.hist(box.vabs_particle2_counter)
     plt.title('v_tot_particle2_counter_hist')
     plt.show()
+    print('finish')
 
 
 
