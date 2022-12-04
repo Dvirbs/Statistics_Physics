@@ -90,7 +90,7 @@ class Board:
         i = col_particles[0]
         j = col_particles[1]
         self.particles[i].update_self_velocity(e_x, e_y, s_v)
-        self.particles[j].update_self_velocity(e_x, e_y, s_v)
+        self.particles[j].update_self_velocity(-e_x, -e_y, s_v)
 
     def update_dt_wall_all(self):
         """
@@ -144,43 +144,35 @@ def first_particle_and_min_time(part1, part2, part3, part4) -> list[float, Parti
 
 def coll_time(p_list: [Particle]):
     min_col_time = 10**5
+    flag = 0
     for i, p_i in enumerate(p_list):
         for j, p_j in enumerate(p_list):
             if j <= i:
                 continue
             d_x, d_y = p_j.location[0] - p_i.location[0], p_j.location[1] - p_i.location[1]
-            print(f'p_j.name {p_j.name}')
-            print(f'p_i.name {p_i.name}')
-            print(f'p_j.location[0] {p_j.location[0]}')
-            print(f'pp_j.location[1] {p_j.location[1]}')
-            print(f'p_i.location[0] {p_i.location[0]}')
-            print(f'p_i.location[1] {p_i.location[1]}')
-            print(f'd_x {d_x}')
-            print(f'd_y {d_y}')
             d_l_2 = d_x ** 2 + d_y**2
             d_l = d_l_2 ** 0.5
             d_vx, d_vy = p_j.velocity[0] - p_i.velocity[0], p_j.velocity[1] - p_i.velocity[1]
             d_v_2 = d_vx ** 2 + d_vy ** 2
-            print(f'd_vx {d_vx}')
-            print(f'd_vy {d_vy}')
-            print(f'd_v_2 {d_v_2}')
             s = d_vx * d_x + d_vy * d_y
-            print(f's {s}')
             gamma = s**2 - d_v_2 * (d_l_2-4*p_i.radius**2)
-            print('gamma', gamma)
 
             if gamma > 0 and s < 0:
-                coll_t_ij = (s+gamma**0.5)/d_v_2
-                collisions_particles = [i, j]
+                flag = 1
+                coll_t_ij = -(s+gamma**0.5)/d_v_2
+                if coll_t_ij < min_col_time:
+                    collisions_particles = [i, j]
+                    e_x = d_x / d_l
+                    e_y = d_y / d_l
+                    s_v = d_vx * e_x + d_vy * e_y
                 min_col_time = min(min_col_time, coll_t_ij)
-                e_x = d_x/d_l_2**0.5
-                e_y = d_y/d_l_2**0.5
-                s_v = d_vx*e_x+d_vy*e_y
-                return min_col_time, collisions_particles, [e_x, e_y, s_v]
             else:
                 coll_t_ij = 10**4
                 min_col_time = min(min_col_time, coll_t_ij)
-                return min_col_time, "No Collisions", "empty list"
+    if flag:
+        return min_col_time, collisions_particles, [e_x, e_y, s_v]
+    else:
+        return min_col_time, "No Collisions", "empty list"
 
 
 if __name__ == '__main__':
@@ -196,41 +188,37 @@ if __name__ == '__main__':
     box = Board()
     box.particles = [p1, p2, p3, p4]
     box.update_positions()
-    print(box)
     while counter <= 10**7:
         box.update_dt_wall_all()
         dt_coll_min, firsts_p_ij_col, arg_list = coll_time(box.particles)   # firsts_p_ij_col is indexes i and j
         dt_wall_min, first_p, axis = first_particle_and_min_time(p1, p2, p3, p4)
-        # print(dt_wall_min, dt_coll_min)
-        # wall_or_coll = np.argmin(np.array([dt_wall_min, dt_coll_min]))
-        # print(wall_or_coll)
-        #         dt = np.array(dt_wall_min, dt_coll_min)[wall_or_coll]
         wall_or_coll = 0 if dt_wall_min < dt_coll_min else 1
-        dt           = min(dt_wall_min, dt_coll_min)
-        print(f'dt {dt}')
-        print(f'dt_wall_min {dt_wall_min}')
-        print(f'dt_coll_min {dt_coll_min}')
+        dt = min(dt_wall_min, dt_coll_min)
+        if 1 < dt:
+            print(f'dt {dt}')
+            print(f't {t}')
         for p in box.particles:
             p.location[0], p.location[1] = p.location[0] + dt * p.velocity[0], p.location[1] + dt * p.velocity[1]
         box.update_positions()
         if wall_or_coll == 0:
             box.particles[first_p].velocity[axis] *= -1
+            particle_wall_counters[first_p] += 1
         else:
             box.update_velocity_both(arg_list, firsts_p_ij_col)
+            particle_coll_counters[firsts_p_ij_col[0]] += 1
+            particle_coll_counters[firsts_p_ij_col[1]] += 1
         counter += 1
-        print(firsts_p_ij_col[0])
-        particle_wall_counters[first_p] += 1
-        # particle_coll_counters[firsts_p_ij_col[0]] += 1
-        # particle_coll_counters[firsts_p_ij_col[1]] += 1
+
         t += dt
-        print("************************************")
-        print(box)
-        print("************************************")
 
         if counter % print_every == 0:
-            if np.sum(particle_coll_counters + particle_wall_counters) % print_every != 0:
+            print(particle_coll_counters)
+            print(particle_wall_counters)
+            print("************************************")
+            print(box)
+            print("************************************")
+            if (np.sum(particle_coll_counters)/2 + np.sum(particle_wall_counters)) % print_every != 0:
                 raise Exception('not updating particle wall collisions properly')
-            print(particle_coll_counters + particle_wall_counters)
 
         # TODO raise error when the total velocity is different from 2
 
