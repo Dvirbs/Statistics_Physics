@@ -270,7 +270,7 @@ if __name__ == '__main__':
             print(particle_wall_counters)
             print("************************************")
             print(box)
-            print("************************************")
+            print("*************************************")
             if (np.sum(particle_coll_counters)/2 + np.sum(particle_wall_counters)) % print_every != 0:
                 raise Exception('not updating particle wall collisions properly')
 
