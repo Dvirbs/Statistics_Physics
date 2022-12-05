@@ -65,11 +65,24 @@ class Board:
         self.particles = []
         self.mat_board = np.zeros((10, 10, 4))
         # self.vx_particle_counter = np.zeros((200, 4))  # -V_max until +V_max
-        self.vx_particle2_counter = []  # -V_max until +V_max
         # self.vy_particle_counter = np.zeros((200, 4))  # -V_max until +V_max
-        self.vy_particle2_counter = []  # -V_max until +V_max
         # self.vabs_particle_counter = np.zeros((100, 4))  # 0 until +V_max
+        # particle_1
+        self.vx_particle1_counter = []  # -V_max until +V_max
+        self.vy_particle1_counter = []  # -V_max until +V_max
+        self.vabs_particle1_counter = []  # 0 until +V_max
+        # particle_2
+        self.vx_particle2_counter = []  # -V_max until +V_max
+        self.vy_particle2_counter = []  # -V_max until +V_max
         self.vabs_particle2_counter = []  # 0 until +V_max
+        # particle_3
+        self.vx_particle3_counter = []  # -V_max until +V_max
+        self.vy_particle3_counter = []  # -V_max until +V_max
+        self.vabs_particle3_counter = []  # 0 until +V_max
+        # particle_4
+        self.vx_particle4_counter = []  # -V_max until +V_max
+        self.vy_particle4_counter = []  # -V_max until +V_max
+        self.vabs_particle4_counter = []  # 0 until +V_max
 
         # self.mat_board = [[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
         #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
@@ -93,11 +106,27 @@ class Board:
                                           1)][round_down(particle.location[0] + dt_diff * particle.velocity[0], 1)][index] += 1
 
     def update_velocity(self):
-        particle_2 = self.particles[3]
+        particle_1 = self.particles[0]
+        self.vx_particle1_counter.append(particle_1.velocity[0])
+        self.vy_particle1_counter.append(particle_1.velocity[1])
+        v_tot = sum([particle_1.velocity[0]**2+particle_1.velocity[1]**2])**0.5
+        self.vabs_particle1_counter.append(v_tot)
+        particle_2 = self.particles[1]
         self.vx_particle2_counter.append(particle_2.velocity[0])
         self.vy_particle2_counter.append(particle_2.velocity[1])
         v_tot = sum([particle_2.velocity[0]**2+particle_2.velocity[1]**2])**0.5
         self.vabs_particle2_counter.append(v_tot)
+        particle_3 = self.particles[2]
+        self.vx_particle3_counter.append(particle_3.velocity[0])
+        self.vy_particle3_counter.append(particle_3.velocity[1])
+        v_tot = sum([particle_3.velocity[0]**2+particle_3.velocity[1]**2])**0.5
+        self.vabs_particle3_counter.append(v_tot)
+        particle_4 = self.particles[3]
+        self.vx_particle4_counter.append(particle_4.velocity[0])
+        self.vy_particle4_counter.append(particle_4.velocity[1])
+        v_tot = sum([particle_4.velocity[0]**2+particle_4.velocity[1]**2])**0.5
+        self.vabs_particle4_counter.append(v_tot)
+
 
     def update_velocity_both(self, argument_list, col_particles):
         """
@@ -245,36 +274,43 @@ if __name__ == '__main__':
             if (np.sum(particle_coll_counters)/2 + np.sum(particle_wall_counters)) % print_every != 0:
                 raise Exception('not updating particle wall collisions properly')
 
-
-        # self.mat_board = [[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-        #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-        #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-        #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-        #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-        #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-        #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-        #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-        #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
-        #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]]
-
     particle_board = np.zeros((10, 10)) #for box at range 10
     particle_index = 3
     for row_i in range(10):
         for col_i in range(10):
             particle_board[row_i][col_i] = box.mat_board[row_i][col_i][particle_index]
     plt.imshow(particle_board, cmap='hot')
+    plt.colorbar()
     plt.show()
 
+    plt.hist(box.vx_particle1_counter)
     plt.hist(box.vx_particle2_counter)
+    plt.hist(box.vx_particle3_counter)
+    plt.hist(box.vx_particle4_counter)
+    plt.xlabel('velocity')
+    plt.ylabel('probability')
     plt.title('vx_particle2_counter_hist')
+    plt.legend(['particle 1', 'particle 2', 'particle 3', 'particle 4'])
     plt.show()
 
+    plt.hist(box.vy_particle1_counter)
     plt.hist(box.vy_particle2_counter)
+    plt.hist(box.vy_particle3_counter)
+    plt.hist(box.vy_particle4_counter)
+    plt.xlabel('velocity')
+    plt.ylabel('probability')
     plt.title('vy_particle2_counter_hist')
+    plt.legend(['particle 1', 'particle 2', 'particle 3', 'particle 4'])
     plt.show()
 
+    plt.hist(box.vabs_particle1_counter)
     plt.hist(box.vabs_particle2_counter)
+    plt.hist(box.vabs_particle3_counter)
+    plt.hist(box.vabs_particle4_counter)
+    plt.xlabel('velocity')
+    plt.ylabel('probability')
     plt.title('v_tot_particle2_counter_hist')
+    plt.legend(['particle 1', 'particle 2', 'particle 3', 'particle 4'])
     plt.show()
     print('finish')
 
