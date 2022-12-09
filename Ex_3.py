@@ -23,14 +23,14 @@ class Particle:
     class that describe the particle data
     """
 
-    def __init__(self, name: str, location: list, velocity: list):
+    def __init__(self, name: str, location: list, velocity: list, radius):
         """
         A constructor for a Particle object
         :param name: A string representing the particle's name
         :param location:  tuple representing the particle's (x, y) location
         :param velocity: tuple representing the particle's (v_x, v_y) velocity
         """
-        self.radius = 0.15
+        self.radius = radius
         self.name = name
         self.location = location
         self.velocity = velocity
@@ -67,22 +67,22 @@ class Board:
         # self.vx_particle_counter = np.zeros((200, 4))  # -V_max until +V_max
         # self.vy_particle_counter = np.zeros((200, 4))  # -V_max until +V_max
         # self.vabs_particle_counter = np.zeros((100, 4))  # 0 until +V_max
-        # particle_1
-        self.vx_particle1_counter = []  # -V_max until +V_max
-        self.vy_particle1_counter = []  # -V_max until +V_max
-        self.vabs_particle1_counter = []  # 0 until +V_max
+        # # particle_1
+        # self.vx_particle1_counter = []  # -V_max until +V_max
+        # self.vy_particle1_counter = []  # -V_max until +V_max
+        # self.vabs_particle1_counter = []  # 0 until +V_max
         # particle_2
         self.vx_particle2_counter = []  # -V_max until +V_max
         self.vy_particle2_counter = []  # -V_max until +V_max
         self.vabs_particle2_counter = []  # 0 until +V_max
-        # particle_3
-        self.vx_particle3_counter = []  # -V_max until +V_max
-        self.vy_particle3_counter = []  # -V_max until +V_max
-        self.vabs_particle3_counter = []  # 0 until +V_max
-        # particle_4
-        self.vx_particle4_counter = []  # -V_max until +V_max
-        self.vy_particle4_counter = []  # -V_max until +V_max
-        self.vabs_particle4_counter = []  # 0 until +V_max
+        # # particle_3
+        # self.vx_particle3_counter = []  # -V_max until +V_max
+        # self.vy_particle3_counter = []  # -V_max until +V_max
+        # self.vabs_particle3_counter = []  # 0 until +V_max
+        # # particle_4
+        # self.vx_particle4_counter = []  # -V_max until +V_max
+        # self.vy_particle4_counter = []  # -V_max until +V_max
+        # self.vabs_particle4_counter = []  # 0 until +V_max
 
         # self.mat_board = [[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
         #                    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
@@ -106,26 +106,26 @@ class Board:
                                           1)][round_down(particle.location[0] + dt_diff * particle.velocity[0], 1)][index] += 1
 
     def update_velocity(self):
-        particle_1 = self.particles[0]
-        self.vx_particle1_counter.append(particle_1.velocity[0])
-        self.vy_particle1_counter.append(particle_1.velocity[1])
-        v_tot = sum([particle_1.velocity[0]**2+particle_1.velocity[1]**2])**0.5
-        self.vabs_particle1_counter.append(v_tot)
+        # particle_1 = self.particles[0]
+        # self.vx_particle1_counter.append(particle_1.velocity[0])
+        # self.vy_particle1_counter.append(particle_1.velocity[1])
+        # v_tot = sum([particle_1.velocity[0]**2+particle_1.velocity[1]**2])**0.5
+        # self.vabs_particle1_counter.append(v_tot)
         particle_2 = self.particles[1]
         self.vx_particle2_counter.append(particle_2.velocity[0])
         self.vy_particle2_counter.append(particle_2.velocity[1])
         v_tot = sum([particle_2.velocity[0]**2+particle_2.velocity[1]**2])**0.5
         self.vabs_particle2_counter.append(v_tot)
-        particle_3 = self.particles[2]
-        self.vx_particle3_counter.append(particle_3.velocity[0])
-        self.vy_particle3_counter.append(particle_3.velocity[1])
-        v_tot = sum([particle_3.velocity[0]**2+particle_3.velocity[1]**2])**0.5
-        self.vabs_particle3_counter.append(v_tot)
-        particle_4 = self.particles[3]
-        self.vx_particle4_counter.append(particle_4.velocity[0])
-        self.vy_particle4_counter.append(particle_4.velocity[1])
-        v_tot = sum([particle_4.velocity[0]**2+particle_4.velocity[1]**2])**0.5
-        self.vabs_particle4_counter.append(v_tot)
+        # particle_3 = self.particles[2]
+        # self.vx_particle3_counter.append(particle_3.velocity[0])
+        # self.vy_particle3_counter.append(particle_3.velocity[1])
+        # v_tot = sum([particle_3.velocity[0]**2+particle_3.velocity[1]**2])**0.5
+        # self.vabs_particle3_counter.append(v_tot)
+        # particle_4 = self.particles[3]
+        # self.vx_particle4_counter.append(particle_4.velocity[0])
+        # self.vy_particle4_counter.append(particle_4.velocity[1])
+        # v_tot = sum([particle_4.velocity[0]**2+particle_4.velocity[1]**2])**0.5
+        # self.vabs_particle4_counter.append(v_tot)
 
 
     def update_velocity_both(self, argument_list, col_particles):
@@ -223,97 +223,94 @@ def coll_time(p_list: [Particle]):
 
 
 if __name__ == '__main__':
-    print_every = 10000
-    p1 = Particle("p1", [0.25, 0.25], [0.21, 0.12])
-    p2 = Particle("p2", [0.25, 0.75], [0.71, 0.18])
-    p3 = Particle("p3", [0.75, 0.25], [-0.23, -0.79])
-    p4 = Particle("p4", [0.75, 0.75], [0.78, 0.34583])
-    t = 0
-    dt_store = 1
-    counter = 0
-    particle_wall_counters = np.array([0, 0, 0, 0])
-    particle_coll_counters = np.array([0, 0, 0, 0])
-    box = Board()
-    box.particles = [p1, p2, p3, p4]
-    box.update_positions(0)
-    while counter <= 10**7:    #10**7
-        box.update_dt_wall_all()
-        dt_coll_min, firsts_p_ij_col, arg_list = coll_time(box.particles)   # firsts_p_ij_col is indexes i and j
-        dt_wall_min, first_p, axis = first_particle_and_min_time(p1, p2, p3, p4)
-        wall_or_coll = 0 if dt_wall_min < dt_coll_min else 1
-        dt = min(dt_wall_min, dt_coll_min)
-        if 0 < ((t + dt) // dt_store - t):
-            # update store position
-            diff_t = round(((t + dt) // dt_store - t)*100)/100
-            box.update_positions(diff_t)
-            # update store velocity
-            box.update_velocity()
 
-        # updates Position in The particle world by dt_min(coll/wall)
-        for p in box.particles:
-            p.location[0], p.location[1] = p.location[0] + dt * p.velocity[0], p.location[1] + dt * p.velocity[1]
+    h = list()
+    list_probability_p2_q1 = list()
 
-        # updates Velocity
-        if wall_or_coll == 0:
-            box.particles[first_p].velocity[axis] *= -1
-            particle_wall_counters[first_p] += 1
-        else:
-            box.update_velocity_both(arg_list, firsts_p_ij_col)
-            particle_coll_counters[firsts_p_ij_col[0]] += 1
-            particle_coll_counters[firsts_p_ij_col[1]] += 1
-        counter += 1
 
-        t += dt
 
-        if counter % print_every == 0:
-            print(particle_coll_counters)
-            print(particle_wall_counters)
-            print("************************************")
-            print(box)
-            print("*************************************")
-            if (np.sum(particle_coll_counters)/2 + np.sum(particle_wall_counters)) % print_every != 0:
-                raise Exception('not updating particle wall collisions properly')
+    for radius in np.arange(0.15, 0.23, 0.01):
+        print_every = 1000000
+        p1 = Particle("p1", [0.25, 0.25], [0.21, 0.12], radius)
+        p2 = Particle("p2", [0.25, 0.75], [0.71, 0.18], radius)
+        p3 = Particle("p3", [0.75, 0.25], [-0.23, -0.79], radius)
+        p4 = Particle("p4", [0.75, 0.75], [0.78, 0.34583], radius)
+        t = 0
+        dt_store = 1
+        counter = 0
+        particle_wall_counters = np.array([0, 0, 0, 0])
+        particle_coll_counters = np.array([0, 0, 0, 0])
+        box = Board()
+        box.particles = [p1, p2, p3, p4]
+        box.update_positions(0)
+        while counter <= 10**7:    #10**7
+            box.update_dt_wall_all()
+            dt_coll_min, firsts_p_ij_col, arg_list = coll_time(box.particles)   # firsts_p_ij_col is indexes i and j
+            dt_wall_min, first_p, axis = first_particle_and_min_time(p1, p2, p3, p4)
+            wall_or_coll = 0 if dt_wall_min < dt_coll_min else 1
+            dt = min(dt_wall_min, dt_coll_min)
+            if 0 < ((t + dt) // dt_store - t):
+                # update store position
+                diff_t = round(((t + dt) // dt_store - t)*100)/100
+                box.update_positions(diff_t)
+                # update store velocity
+                box.update_velocity()
 
-    particle_board = np.zeros((10, 10)) #for box at range 10
-    particle_index = 3
-    for row_i in range(10):
-        for col_i in range(10):
-            particle_board[row_i][col_i] = box.mat_board[row_i][col_i][particle_index]
-    plt.imshow(particle_board, cmap='hot')
-    plt.colorbar()
+            # updates Position in The particle world by dt_min(coll/wall)
+            for p in box.particles:
+                p.location[0], p.location[1] = p.location[0] + dt * p.velocity[0], p.location[1] + dt * p.velocity[1]
+
+            # updates Velocity
+            if wall_or_coll == 0:
+                box.particles[first_p].velocity[axis] *= -1
+                particle_wall_counters[first_p] += 1
+            else:
+                box.update_velocity_both(arg_list, firsts_p_ij_col)
+                particle_coll_counters[firsts_p_ij_col[0]] += 1
+                particle_coll_counters[firsts_p_ij_col[1]] += 1
+            counter += 1
+
+            t += dt
+
+            if counter % print_every == 0:
+                print(particle_coll_counters)
+                print(particle_wall_counters)
+                print("************************************")
+                print(box)
+                print("*************************************")
+                if (np.sum(particle_coll_counters)/2 + np.sum(particle_wall_counters)) % print_every != 0:
+                    raise Exception('not updating particle wall collisions properly')
+        particle_index = 1
+        counts_p2_q1 = sum([sum([col[particle_index] for col_i, col in enumerate(row) if col_i < 5]) for row_i, row in enumerate(box.mat_board) if 4 < row_i])
+        counts_p2_tot = sum([sum([col[particle_index] for col_i, col in enumerate(row)]) for row_i, row in enumerate(box.mat_board)])
+        list_probability_p2_q1.append(counts_p2_q1/counts_p2_tot)
+
+
+        particle_board = np.zeros((10, 10))  # for box at range 10
+        for row_i in range(10):
+            for col_i in range(10):
+                particle_board[row_i][col_i] = box.mat_board[row_i][col_i][particle_index]
+        plt.imshow(particle_board, cmap='hot')
+        plt.colorbar()
+        plt.show()
+
+    plt.scatter(np.arange(0.15, 0.23, 0.01), list_probability_p2_q1)
+
+    plt.xlabel('Radius')
+    plt.ylabel('Probability')
+    plt.title('[x,y] <= 0.25 Probability')
     plt.show()
 
-    plt.hist(box.vx_particle1_counter)
-    plt.hist(box.vx_particle2_counter)
-    plt.hist(box.vx_particle3_counter)
-    plt.hist(box.vx_particle4_counter)
-    plt.xlabel('velocity')
-    plt.ylabel('probability')
-    plt.title('vx_particle2_counter_hist')
-    plt.legend(['particle 1', 'particle 2', 'particle 3', 'particle 4'])
+    for hist in h:
+        plt.plot(np.linspace(-2 ** 0.5, 2 ** 0.5, num=len(hist[0])), hist[0] / (sum(hist[0])))
+    plt.xlabel('Velocity')
+    plt.ylabel('Probability')
+    plt.title('Vx Probability Density ')
+    plt.legend(['radius 0.15', 'radius 0.16', 'radius 0.17', 'radius 0.18', 'radius 0.19',
+                'radius 0.20', 'radius 0.21', 'radius 0.22', 'radius 0.23'])
     plt.show()
 
-    plt.hist(box.vy_particle1_counter)
-    plt.hist(box.vy_particle2_counter)
-    plt.hist(box.vy_particle3_counter)
-    plt.hist(box.vy_particle4_counter)
-    plt.xlabel('velocity')
-    plt.ylabel('probability')
-    plt.title('vy_particle2_counter_hist')
-    plt.legend(['particle 1', 'particle 2', 'particle 3', 'particle 4'])
-    plt.show()
-
-    plt.hist(box.vabs_particle1_counter)
-    plt.hist(box.vabs_particle2_counter)
-    plt.hist(box.vabs_particle3_counter)
-    plt.hist(box.vabs_particle4_counter)
-    plt.xlabel('velocity')
-    plt.ylabel('probability')
-    plt.title('v_tot_particle2_counter_hist')
-    plt.legend(['particle 1', 'particle 2', 'particle 3', 'particle 4'])
-    plt.show()
     print('finish')
-
 
 
 
