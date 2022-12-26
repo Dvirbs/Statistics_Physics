@@ -1,4 +1,4 @@
-from Ex_4 import *
+from ex_4_single import *
 import numpy as np
 import matplotlib.pyplot as plt
 
