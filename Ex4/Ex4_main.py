@@ -1,4 +1,4 @@
-from ex_4_single import *
+from Ex_4 import *
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -6,7 +6,6 @@ t_vector = np.arange(T_min, T_max, 0.2)
 N0_mean_per_t = np.zeros(np.size(t_vector))
 N0_squared_mean_per_t = np.zeros(np.size(t_vector))
 U_tot_mean = np.zeros(np.size(t_vector))
-U_tot_mean_square = np.zeros(np.size(t_vector))
 c_v = np.zeros(np.size(t_vector))
 # print(N0_mean_per_t)
 
@@ -20,7 +19,8 @@ for t_i, t in enumerate(t_vector):
     N0_full_k = np.zeros(int(k))
     U_tot = np.zeros(int(k))
     U_tot_sum = sum([(U.n_top[n] - U.n_bottom[n] + 1) * n for n in range(0, n_max - 1) if U.n_top[n] != 0])
-    U_tot_square_sum = U_tot_sum**2
+    U_tot_sum_k = 0
+    U_tot_sum_2k = 0
     U_last_temp = U_tot_sum
     delta_cal = 1000
     if t <= 1:
@@ -36,27 +36,26 @@ for t_i, t in enumerate(t_vector):
         part_level_i = np.argmax(U.n_top >= N_i)
 
         P_minus = energy_minus_probability(part_level_i, t, my)  # true or false for n-1
+
         if P_minus:
             if part_level_i != 0:
                 U_last_temp -= 1
-                U_tot_sum += U_last_temp
-                U_tot_square_sum += U_last_temp**2
+                # U_tot_sum += U_last_temp
                 U.n_top[part_level_i - 1] = U.n_bottom[part_level_i]
                 if U.n_bottom[part_level_i - 1] == 0:
                     U.n_bottom[part_level_i - 1] = U.n_bottom[part_level_i]
-                if U.n_bottom[part_level_i] == U.n_top[part_level_i]:
+                elif U.n_bottom[part_level_i] == U.n_top[part_level_i]:
                     U.n_bottom[part_level_i] = U.n_top[part_level_i] = 0
                 else:
                     U.n_bottom[part_level_i] += 1
         else:
             if part_level_i != 99:  # python !!!!
                 U_last_temp += 1
-                U_tot_sum += U_last_temp
-                U_tot_square_sum += U_last_temp**2
+                # U_tot_sum += U_last_temp
                 U.n_bottom[part_level_i + 1] = U.n_top[part_level_i]
                 if U.n_top[part_level_i + 1] == 0:
                     U.n_top[part_level_i + 1] = U.n_top[part_level_i]
-                if U.n_top[part_level_i] == U.n_bottom[part_level_i]:
+                elif U.n_top[part_level_i] == U.n_bottom[part_level_i]:
                     U.n_bottom[part_level_i] = U.n_top[part_level_i] = 0
                 else:
                     U.n_top[part_level_i] -= 1
@@ -68,39 +67,40 @@ for t_i, t in enumerate(t_vector):
             else:
                 N0_half_k[-(k - step)] = U.n_top[part_level_i] - U.n_bottom[part_level_i]
         elif 0.5 <= step / k_2 < 1:
+            U_tot_sum_k += U_last_temp
             if U.n_top[part_level_i] == U.n_bottom[part_level_i]:
                 N0_full_k[step - k] = 1
             else:
                 N0_full_k[step - k] = U.n_top[part_level_i] - U.n_bottom[part_level_i]
-        elif k_2 / step == 1:
+        elif k_2 / step == 1 or 10**9 < step:
             N0_full_k_mean = np.mean(N0_full_k)
             delta_cal = abs(N0_full_k_mean - np.mean(N0_half_k)) / N0_full_k_mean
             print("delta_cal", delta_cal)
             if delta_cal <= delta:
                 print("t = ", t)
                 break
+
             else:
                 k = k * 2
                 k_2 = k * 2
                 N0_half_k = N0_full_k
                 N0_full_k = np.zeros(int(k))
-                U_tot_sum = 0
+                U_tot_sum = U_tot_sum_k
+                U_tot_sum_k = 0
+
         if (step % 100000 == 0):
             print("step = ", step, "temperature = ", t)
         step += 1
     N0_mean_per_t[t_i] = np.mean(N0_full_k)
     N0_squared_mean_per_t[t_i] = np.mean(N0_full_k ** 2)
     U_tot_mean[t_i] = U_tot_sum / k
-    U_tot_mean_square[t_i] = U_tot_square_sum / k
     if step == k_2:
         U_tot_mean[t_i] = U_tot_sum / k_2
-        U_tot_mean_square[t_i] = U_tot_square_sum / k_2
-    c_v[t_i] = (U_tot_mean_square[t_i] - U_tot_mean[t_i] ** 2)/t**2
+    c_v[t_i] = (abs(U_tot_mean[t_i] - U_tot_mean[t_i-1]))/(0.2*N)
 
 
 print(N0_mean_per_t)
 print(U_tot_mean)
-print(U_tot_mean_square)
 print(c_v)
 standard_deviation = (N0_squared_mean_per_t - N0_mean_per_t ** 2) ** 0.5
 print(standard_deviation)
