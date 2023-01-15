@@ -1,106 +1,95 @@
-import numpy as np
 from Ex_5 import *
 import numpy as np
+import time
 
 
-def run_simulation(k, lattice_scan):
+def run_simulation(k, lattice, mean_magnetization_k_2):
     # Initialize the lattice with random spin values
-    lattice = IsingLattice(0.1, 1)
     magnetization_half_k = np.zeros(int(k * 0.5))
+    magnetization_k = np.zeros(int(k))
+    U_list = []
+    flip = 0
+    lattice_scan = 0
 
-    # Run k/2 steps
-    for _ in range(k // 2):
-        lattice_scan += 1
-        for x in range(16):
-            for y in range(16):
-                lattice.flip_spin(x, y)
-            if lattice_scan % 3 == 0:
-                magnetization_list.append(np.mean(self.lattice))
+    if mean_magnetization_k_2 is None:
+        # Run k/2 flips without documenting
+        while flip < k / 2:
+            for x in range(16):
+                for y in range(16):
+                    torf = lattice.flip_spin(x, y)
+                    flip += torf
+                    # print('k', k, 'torf', torf)
+            if flip > k / 2:
+                flip = k / 2
 
-    # Document magnetization every 3 scans of the lattice
-    for _ in range(3):
-        magnetization.append(np.mean(lattice))
-        for _ in range(k // 2):
-            x, y = np.random.randint(0, 16, 2)
-            lattice[x, y] *= -1
+        # Run k/2 flips while documenting
+        while k / 2 <= flip < k:
+            lattice_scan += 1
+            m = 0
+            for x in range(16):
+                for y in range(16):
+                    torf = lattice.flip_spin(x, y)
+                    flip += torf
+                    m += lattice.lattice[x, y]
+            if lattice_scan % n_sweep == 0:
+                magnetization_half_k[(int(lattice_scan / n_sweep) - 1)] = m
+                #print("magnetization_half_k[step] = ", magnetization_half_k[(int(lattice_scan / n_sweep) - 1)])
+                # TODO check if the vector starting from 0
+            if flip > k:
+                flip = k
 
-    mean_magnetization_k_2 = np.mean(magnetization)
+        mean_magnetization_k_2 = np.sum(magnetization_half_k) / ((lattice_scan + 1) / n_sweep)
+    else:
+        flip = k
 
     # Run k more times
-    for _ in range(k):
-        x, y = np.random.randint(0, 16, 2)
-        lattice[x, y] *= -1
+    lattice_scan = 0
+    while flip <= 2 * k:
+        lattice_scan += 1
+        m = 0
+        e = 0
 
-    # Document magnetization every 3 scans of the lattice
-    magnetization = []
-    for _ in range(3):
-        magnetization.append(np.mean(lattice))
-        for _ in range(k):
-            x, y = np.random.randint(0, 16, 2)
-            lattice[x, y] *= -1
+        for x in range(16):
+            for y in range(16):
+                torf = lattice.flip_spin(x, y)
+                flip += torf
+                m += lattice.lattice[x, y]
+                e += lattice.calc_energy(x, y)  # calculate the energy of particle [x,y]
 
-    mean_magnetization_k = np.mean(magnetization)
+        if lattice_scan % n_sweep == 0:
+            magnetization_k[(int(lattice_scan / n_sweep) - 1)] = m  # same
+            # print("magnetization_k[step] = ", magnetization_k[(int(lattice_scan / n_sweep) - 1)])
+            U_list.append(e)
 
+    mean_magnetization_k = np.sum(magnetization_k) / ((lattice_scan + 1) / n_sweep)
+    mean_magnetization_square_k = np.sum(magnetization_k ** 2) / ((lattice_scan + 1) / n_sweep)
+    average_U_K = np.mean(U_list)
+    average_U_squared_K = np.mean(np.array(U_list) ** 2)
     # check convergence
+
+    print('delta = ', abs(mean_magnetization_k - mean_magnetization_k_2) / abs(mean_magnetization_k))
     if abs(mean_magnetization_k - mean_magnetization_k_2) / abs(mean_magnetization_k) < 1e-3 or k >= 10 ** 8:
-        return True, mean_magnetization_k
+        return True, mean_magnetization_k, mean_magnetization_square_k, average_U_K, average_U_squared_K
     else:
-        return False, mean_magnetization_k
+        return False, mean_magnetization_k, mean_magnetization_square_k, average_U_K, average_U_squared_K
 
 
 # set k value
-k = 16 * 16
-lattice_scan = 0
+k = 16 * 16 * 3 * 100
+lattice = IsingLattice(0.1, 1)
+mean_magnetization_k_2 = None
 
 while True:
-    converged, mean_magnetization = run_simulation(k, lattice_scan)
+    converged, mean_magnetization, mean_magnetization_square_k, average_U_K, average_U_squared_K = run_simulation(k,
+                                                                                                                  lattice,
+                                                                                                                  mean_magnetization_k_2)
     if converged:
         print("Converged! Mean magnetization:", mean_magnetization)
+        print("Converged! Mean mean_magnetization_square_k:", mean_magnetization_square_k)
+        print("Converged! Mean mean_magnetization_square_k:", mean_magnetization_square_k)
+        print("Converged! average_U_K:", average_U_K)
+        print("Converged! average_U_squared_K:", average_U_squared_K)
         break
     k *= 2
-
-# import numpy as np
-#
-# class IsingLatticeConvergence:
-#     def __init__(self, J, T, k):
-#         self.J = J
-#         self.T = T
-#         self.lattice = np.random.choice([-1, 1], size=(16, 16))
-#         self.k = k
-#         self.magnetization_half_k = []
-#         self.magnetization_full_k = []
-#
-#     def calc_energy(self, i, j):
-#         """Calculates the energy of a single site (i, j)"""
-#         s = self.lattice[i, j]
-#         neighbors = (self.lattice[(i+1)%16, j] + self.lattice[(i-1)%16, j] +
-#                      self.lattice[i, (j+1)%16] + self.lattice[i, (j-1)%16])
-#         return -self.J * s * neighbors
-#
-#     def flip_spin(self, i, j):
-#         """Flips the spin at site (i, j)"""
-#         energy_diff = -2 * self.calc_energy(i, j)
-#         if energy_diff <= 0 or np.random.rand() < np.exp(-energy_diff / self.T):
-#             self.lattice[i, j] *= -1
-#
-#     def simulate(self):
-#         """Simulate the system for 'steps' number of steps"""
-#         k_2 = self.k * 0.5
-#         for step in range(int(self.k)):
-#             i, j = np.random.randint(0, 16, size=2)
-#             self.flip_spin(i, j)
-#             if 0.25 <= step / k_2 < 0.5:
-#                 magnetization = np.mean(self.lattice)
-#                 self.magnetization_half_k.append(magnetization)
-#                 if step % 3 == 0:
-#                     print(f"Magnetization after {step} steps: {magnetization}")
-#             elif 0.5 <= step / k_2 < 1:
-#                 magnetization = np.mean(self.lattice)
-#                 self.magnetization_full_k.append(magnetization)
-#                 if step % 3 == 0:
-#                     print(f"Magnetization after {step} steps: {magnetization}")
-#             mean_magnetization_half_k = np.mean(self.magnetization_half_k)
-#             mean_magnetization_full_k = np.mean(self.magnetization_full_k)
-#             if abs(mean_magnetization_half_k - mean_magnetization_full_k) / abs(mean_magnetization_full_k) < 10 ** -3 or step == 10 ** 8:
-#                 print(f"Convergence reached after {step} steps with mean magnetization {mean_magnetization_full_k}")
-#                 break
+    print('re running, k = ', k)
+    mean_magnetization_k_2 = mean_magnetization
