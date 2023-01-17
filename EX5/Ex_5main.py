@@ -34,7 +34,7 @@ class IsingExperiment:
         return np.sqrt(energy_std) / (self.lattice.size ** 2)
 
     def print_step_in_running_process(self, which_k):
-        if self.flip % 10000 == 0:
+        if self.flip % 50000 == 0:
             print(f"flip Current step: {self.flip}")
             print(f"K Current step: {self.K}")
             print("lattice", self.lattice.lattice)
@@ -84,6 +84,10 @@ class IsingExperiment:
         convergence_value = np.abs(self.mean_M_K - self.mean_M_K_2) / (1e-8 + np.abs(self.mean_M_K))
         # הודיה הכניסה המספר 1e-8 במכנה ואנחנו לא, כנראה בשביל למנוע מכך שהמכנה יהיה מספר קטן מדי
         # print(f"convergence_value = {convergence_value}")
+        print('convergence_value', convergence_value)
+        print('delta', delta)
+        print('k', self.K)
+        print('k limit', 10 ** 8)
         return convergence_value <= delta or 10 ** 8 <= self.K
 
     def run(self):
@@ -125,13 +129,45 @@ def single_experiment(h, J):
 
 
 if __name__ == '__main__':
-    # set k value
-    J = 0.1
-    All_Data = []
-    while J < 0.8:
-        J += 0.05
-        data = single_experiment(h, J)
-        print(J)
-        All_Data.append(data)
 
-    print(All_Data)
+    def single_J():
+        J = 0.43
+        data = single_experiment(h, J)
+        print(data)
+
+
+    # set k value
+    def all_J():
+        J = 0.1
+        All_Data = []
+        while J <= 0.8:
+
+            if 0.4 < J < 0.5:
+                J = 0.42
+                while J <= 0.46:
+                    J += 0.005
+                    data = single_experiment(h, J)
+                    print(J)
+                    All_Data.append(data)
+                    print(All_Data)
+                J = 0.5
+            else:
+                J += 0.05
+                data = single_experiment(h, J)
+                print(J)
+                All_Data.append(data)
+                print(All_Data)
+
+
+    def high_res():
+        J = 0.42
+        All_Data = []
+        while J <= 0.46:
+            J += 0.005
+            data = single_experiment(h, J)
+            print(J)
+            All_Data.append(data)
+            print(All_Data)
+
+
+    single_J()
